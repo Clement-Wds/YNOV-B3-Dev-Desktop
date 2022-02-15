@@ -16,65 +16,83 @@ import java.io.IOException;
 
 public class HelloApplication extends Application {
 
-    //Width and height of stage
-    static int stageWidth = 1080;
+    static int circleSize = 50;
+
+    static int stageWidth = 1280;
     static int stageHeight = 720;
 
-    //Width, height, position x y, color
-    static int recWidth = 200;
-    static int recHeight = 50;
+    static int recHeight = 25;
+    static int recWidth = 150;
 
-    static int rec1PosX = 50;
-    static int rec1PosY = 50;
-    static int rec2PosX = 750;
-    static int rec2PosY = 50;
+    static int rec1posX = 1;
+    static int rec1posY = 50;
 
-    static int ballWidth = 50;
-    static int ballHeight = 50;
-    static int ballPosX = 400;
-    static int ballPosY = 400;
+    static int rec2posX = 1254;
+    static int rec2posY = 325;
 
-    static String rec1Color = "BLUE";
-    static String rec2Color = "GREEN";
-    static String ballColor = "RED";
+    static int ballSize = 25;
+    static int ballPosX = 640;
+    static int ballPosY = 325;
+
+    static int directionBallX = 1;
+    static int directionBallY = 1;
 
     Timeline tl;
     Rectangle ball;
-
-    public static void main(String[] args) {
-        launch();
-    }
+    Rectangle r1;
+    Rectangle r2;
 
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
 
-        ball = new Rectangle(ballPosX, ballPosY, ballWidth, ballHeight);
+        ball = new Rectangle(ballPosX, ballPosY, ballSize, ballSize);
+        r1 = new Rectangle(rec1posX, rec1posY, recHeight, recWidth);
+        r2 = new Rectangle(rec2posX, rec2posY, recHeight, recWidth);
 
-        Rectangle r1 = new Rectangle(rec1PosX, rec1PosY, recHeight, recWidth);
-        Rectangle r2 = new Rectangle(rec2PosX, rec2PosY, recHeight, recWidth);
+        Group group = new Group(ball, r1, r2);
 
-        Group root = new Group(ball, r1, r2);
+        tl = new Timeline(new KeyFrame(Duration.millis(100), e -> run()));
+        tl.setCycleCount(Timeline.INDEFINITE);
 
-        Scene scene = new Scene(root, stageWidth, stageHeight, Color.WHITE);
+        Scene scene = new Scene(group, stageWidth, stageHeight, Color.WHITE);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
-        run();
-
+        tl.play();
     }
 
     public void run() {
-        //On utilise timer pour le mouvement automatique de la balle
-        tl = new Timeline();
 
-        tl.setCycleCount(Timeline.INDEFINITE);
+        if((ball.getX() + ball.getWidth() + 1 >= r2.getX()) && (ball.getY()>=r2.getY() && ball.getY()<=(r2.getY()+r2.getHeight()))
+                || (ball.getX()-1 <= r1.getX() + r1.getWidth()) && (ball.getY()>=r1.getY() && ball.getY()<=(r1.getY()+r1.getHeight()))) {
+            directionBallX = -directionBallX;
+            System.out.println("Bim Bam Boum");
+        }
+
+        if(ball.getY() <= 0 || ball.getY() + ball.getWidth() >= stageHeight){
+            directionBallY = -directionBallY;
+        }
+
+        ball.setX(ball.getX() + ball.getWidth() * directionBallX);
+        ball.setY(ball.getY() + ball.getHeight() * directionBallY);
+        r2.setY(ball.getY());
+        r1.setY(ball.getY());
+
         tl.getKeyFrames().addAll(
-                new KeyFrame(Duration.millis(1000),
-                        new KeyValue(ball.translateXProperty(), ball.getX() + ball.getWidth())
+                new KeyFrame(Duration.millis(5000),
+                        new KeyValue(ball.translateXProperty(), ball.getX() + ball.getWidth()),
+                        new KeyValue(ball.translateYProperty(), ball.getY() + ball.getWidth()),
+                        new KeyValue(r2.translateYProperty(), ball.getY())
+
                 )
+
         );
 
         tl.play();
+    }
+
+    public static void main(String[] args) {
+        launch();
     }
 }
