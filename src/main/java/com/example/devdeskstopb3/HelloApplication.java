@@ -7,8 +7,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -42,6 +45,11 @@ public class HelloApplication extends Application {
     Rectangle r1;
     Rectangle r2;
 
+    TextArea t1;
+    Text score1, score2;
+
+    int scoreInt1 = 0, scoreInt2 = 0;
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
@@ -50,7 +58,14 @@ public class HelloApplication extends Application {
         r1 = new Rectangle(rec1posX, rec1posY, recHeight, recWidth);
         r2 = new Rectangle(rec2posX, rec2posY, recHeight, recWidth);
 
-        Group group = new Group(ball, r1, r2);
+        t1 = new TextArea("text?");
+        score1 = new Text(100, 100, String.valueOf(scoreInt1));
+        score1.setStyle("-fx-font-size: 50");
+
+        score2 = new Text(500, 100, String.valueOf(scoreInt2));
+        score2.setStyle("-fx-font-size: 50");
+
+        Group group = new Group(ball, r1, r2, score1, score2);
 
         tl = new Timeline(new KeyFrame(Duration.millis(100), e -> run()));
         tl.setCycleCount(Timeline.INDEFINITE);
@@ -58,6 +73,9 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(group, stageWidth, stageHeight, Color.WHITE);
         stage.setTitle("Hello!");
         stage.setScene(scene);
+
+        //TODO: Move R1 by mouse event
+
         stage.show();
         tl.play();
     }
@@ -72,6 +90,13 @@ public class HelloApplication extends Application {
 
         if(ball.getY() <= 0 || ball.getY() + ball.getWidth() >= stageHeight){
             directionBallY = -directionBallY;
+        }
+
+        if(ball.getX() <= 0 || ball.getY() + ball.getWidth() >= stageHeight){
+            if(ball.getX()<=0){
+                scoreInt2 = ++scoreInt2;
+                score2.setText(String.valueOf(scoreInt2));
+            }
         }
 
         ball.setX(ball.getX() + ball.getWidth() * directionBallX);
