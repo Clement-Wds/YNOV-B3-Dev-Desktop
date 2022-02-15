@@ -12,31 +12,44 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
+
+    //Width and height of stage
+    static int stageWidth = 1080;
+    static int stageHeight = 720;
+
+    //Width, height, position x y, color
+    static int recWidth = 200;
+    static int recHeight = 50;
+
+    static int rec1PosX = 50;
+    static int rec1PosY = 50;
+    static int rec2PosX = 750;
+    static int rec2PosY = 50;
+
+    static int ballSize = 50;
+    static int ballPosX = 400;
+    static int ballPosY = 400;
+
+    static String rec1Color = "BLUE";
+    static String rec2Color = "GREEN";
+    static String ballColor = "RED";
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
 
-        Rectangle rectangle = new Rectangle();
-        rectangle.setX(20);
-        rectangle.setY(50);
-        rectangle.setWidth(200);
-        rectangle.setHeight(200);
-        rectangle.setFill(Color.BLUE);
+        Circle ball = new Circle(ballPosX, ballPosY, ballSize);
 
-        Circle circle = new Circle();
-        circle.setCenterX(100);
-        circle.setCenterY(100);
-        circle.setRadius(25);
-        circle.setFill(Color.WHITE);
+        Rectangle r1 = new Rectangle(rec1PosX, rec1PosY, recHeight, recWidth);
+        Rectangle r2 = new Rectangle(rec2PosX, rec2PosY, recHeight, recWidth);
 
-        Group root = new Group();
-        root.getChildren().add(rectangle);
-        root.getChildren().add(circle);
+        Group root = new Group(ball, r1, r2);
 
-        Scene scene = new Scene(root, 500, 500, Color.WHITE);
+        Scene scene = new Scene(root, stageWidth, stageHeight, Color.WHITE);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
+
     }
 
     public static void main(String[] args) {
